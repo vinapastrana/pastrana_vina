@@ -13,7 +13,7 @@
         <!-- Create Record Button -->
         <div class="flex justify-end mb-4">
             <a href="<?= site_url('/users/create'); ?>"
-               class="bg-green-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-green-700 transition transform hover:scale-105">
+               class="bg-violet-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-violet-700 transition transform hover:scale-105">
                 + Create Record
             </a>
         </div>
@@ -22,7 +22,7 @@
         <div class="overflow-x-auto">
             <table class="w-full border border-gray-200 rounded-lg overflow-hidden">
                 <thead>
-                    <tr class="bg-green-600 text-white">
+                    <tr class="bg-violet-600 text-white">
                         <th class="px-4 py-3 text-left">ID</th>
                         <th class="px-4 py-3 text-left">Username</th>
                         <th class="px-4 py-3 text-left">Email</th>

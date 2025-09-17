@@ -77,7 +77,7 @@ $config['ENVIRONMENT']             = 'development';
 |	http://example.com/
 |
 | WARNING: You MUST set this value!
-|
+| https://pastrana-vina.onrender.com
 */
 $config['base_url'] 				= 'https://pastrana-vina.onrender.com';
 
