@@ -14,7 +14,7 @@
     <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Create an Account</h2>
 
     <!-- ✅ fixed form action -->
-    <form action="index.php/users/create" method="POST" class="space-y-4">
+    <form action="users/create" method="POST" class="space-y-4">
 
       <!-- Username -->
       <div>
