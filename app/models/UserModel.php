@@ -7,7 +7,7 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
  * Automatically generated via CLI.
  */
 class UserModel extends Model {
-    protected $table = 'user';
+    protected $table = 'users';
     protected $primary_key = 'id';
 
     public function __construct()
@@ -61,9 +61,9 @@ class UserModel extends Model {
     public function page($q = '', $records_per_page = null, $page = null) {
  
             if (is_null($page)) {
-                return $this->db->table('user')->get_all();
+                return $this->db->table('users')->get_all();
             } else {
-                $query = $this->db->table('user');
+                $query = $this->db->table('users');
 
                 // Build LIKE conditions
                 $query->like('id', '%'.$q.'%')
