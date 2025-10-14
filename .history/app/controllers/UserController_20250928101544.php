@@ -23,7 +23,7 @@ class UserController extends Controller {
 
     public function index()
     {
-        $this->call->model('UsersModel');
+        $this->call->model('UserModel');
         $this->check_login();
 
         $logged_in_user = $_SESSION['user']; 
@@ -33,7 +33,7 @@ class UserController extends Controller {
         $q    = isset($_GET['q']) && !empty($_GET['q']) ? trim($this->io->get('q')) : '';
 
         $records_per_page = 5;
-        $users = $this->UsersModel->page($q, $records_per_page, $page);
+        $users = $this->UserModel->page($q, $records_per_page, $page);
 
         $data['users'] = $users['records'];
         $total_rows = $users['total_rows'];
@@ -53,53 +53,50 @@ class UserController extends Controller {
     }
 
     public function create()
-{
-    $this->call->model('UsersModel');
-
-    // Get logged-in user
-    $logged_in_user = $_SESSION['user'] ?? ['role' => 'user'];
-
-    if ($this->io->method() === 'post') {
-
-        $username = $this->io->post('username');
-        $email = $this->io->post('email');
-        $password = $this->io->post('password'); 
-
-        // Only allow admin to set role
-        if ($logged_in_user['role'] === 'admin') {
-            $role = $this->io->post('role') ?? 'user';
-        } else {
-            $role = 'user'; // force normal users to create only 'user' accounts
-        }
-
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-        $data = [
-            'username' => $username,
-            'email'    => $email,
-            'password' => $hashedPassword,
-            'role'     => $role
-        ];
-
-        if ($this->UsersModel->insert($data)) {
-            redirect('/users');
-        } else {
-            echo 'Failed to create user.';
-        }
-    } else {
-        $this->call->view('users/create', ['logged_in_user' => $logged_in_user]);
-    }
-}
-
-
-    public function update($id)
     {
-        $this->call->model('UsersModel');
+        $this->call->model('UserModel');
         $this->check_login();
 
         $logged_in_user = $_SESSION['user'];
 
-        $user = $this->UsersModel->get_user_by_id($id);
+        if ($this->io->method() === 'post') {
+            $username = $this->io->post('username');
+            $email    = $this->io->post('email');
+            $password = $this->io->post('password');
+            $role     = $this->io->post('role');
+
+            // Normal users cannot create admin accounts
+            if ($logged_in_user['role'] !== 'admin') {
+                $role = 'user';
+            }
+
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+            $data = [
+                'username' => $username,
+                'email'    => $email,
+                'password' => $hashedPassword,
+                'role'     => $role
+            ];
+
+            if ($this->UserModel->insert($data)) {
+                redirect('/users');
+            } else {
+                echo 'Failed to create user.';
+            }
+        } else {
+            $this->call->view('users/create');
+        }
+    }
+
+    public function update($id)
+    {
+        $this->call->model('UserModel');
+        $this->check_login();
+
+        $logged_in_user = $_SESSION['user'];
+
+        $user = $this->UserModel->get_user_by_id($id);
         if (!$user) {
             echo "User not found.";
             return;
@@ -140,7 +137,7 @@ class UserController extends Controller {
                 ];
             }
 
-            if ($this->UsersModel->update($id, $data)) {
+            if ($this->UserModel->update($id, $data)) {
                 redirect('/users');
             } else {
                 echo 'Failed to update user.';
@@ -154,7 +151,7 @@ class UserController extends Controller {
 
     public function delete($id)
     {
-        $this->call->model('UsersModel');
+        $this->call->model('UserModel');
         $this->check_login();
 
         $logged_in_user = $_SESSION['user'];
@@ -165,16 +162,16 @@ class UserController extends Controller {
             return;
         }
 
-        if ($this->UsersModel->delete($id)) {
+        if ($this->UserModel->delete($id)) {
             redirect('/users');
         } else {
             echo 'Failed to delete user.';
         }
     }
 
-  public function register()
+    public function register()
     {
-        $this->call->model('UsersModel');
+        $this->call->model('UserModel');
 
         if ($this->io->method() === 'post') {
             $username = $this->io->post('username');
@@ -183,6 +180,7 @@ class UserController extends Controller {
 
             // Normal registration defaults to 'user' role
             $role = 'user';
+
             $data = [
                 'username' => $username,
                 'email'    => $email,
@@ -190,13 +188,14 @@ class UserController extends Controller {
                 'role'     => $role
             ];
 
-            if ($this->UsersModel->insert($data)) {
+            if ($this->UserModel->insert($data)) {
                 redirect('/reg/login');
             }
         }
 
         $this->call->view('/reg/register');
     }
+
     public function login()
     {
         $this->call->library('reg');
@@ -207,14 +206,13 @@ class UserController extends Controller {
             $username = $this->io->post('username');
             $password = $this->io->post('password');
 
-            $this->call->model('UsersModel');
-            $user = $this->UsersModel->get_user_by_username($username);
+            $this->call->model('UserModel');
+            $user = $this->UserModel->get_user_by_username($username);
 
             if ($user) {
                 if ($this->reg->login($username, $password)) {
                     $_SESSION['user'] = [
-                    
-    'id'       => $user['id'],
+                        'id'       => $user['id'],
                         'username' => $user['username'],
                         'role'     => $user['role']
                     ];
@@ -233,14 +231,14 @@ class UserController extends Controller {
 
     public function dashboard()
     {
-        $this->call->model('UsersModel');
+        $this->call->model('UserModel');
         $this->check_login();
 
         $page = isset($_GET['page']) ? $this->io->get('page') : 1;
         $q    = isset($_GET['q']) && !empty($_GET['q']) ? trim($this->io->get('q')) : '';
 
         $records_per_page = 5;
-        $user = $this->UsersModel->page($q, $records_per_page, $page);
+        $user = $this->UserModel->page($q, $records_per_page, $page);
 
         $data['user'] = $user['records'];
         $total_rows = $user['total_rows'];
