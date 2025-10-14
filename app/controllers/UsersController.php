@@ -23,7 +23,7 @@ class UserController extends Controller {
 
     public function index()
     {
-        $this->call->model('UserModel');
+        $this->call->model('UsersModel');
         $this->check_login();
 
         $logged_in_user = $_SESSION['user']; 
@@ -33,7 +33,7 @@ class UserController extends Controller {
         $q    = isset($_GET['q']) && !empty($_GET['q']) ? trim($this->io->get('q')) : '';
 
         $records_per_page = 5;
-        $users = $this->UserModel->page($q, $records_per_page, $page);
+        $users = $this->UsersModel->page($q, $records_per_page, $page);
 
         $data['users'] = $users['records'];
         $total_rows = $users['total_rows'];
@@ -54,7 +54,7 @@ class UserController extends Controller {
 
     public function create()
 {
-    $this->call->model('UserModel');
+    $this->call->model('UsersModel');
 
     // Get logged-in user
     $logged_in_user = $_SESSION['user'] ?? ['role' => 'user'];
@@ -81,7 +81,7 @@ class UserController extends Controller {
             'role'     => $role
         ];
 
-        if ($this->UserModel->insert($data)) {
+        if ($this->UsersModel->insert($data)) {
             redirect('/users');
         } else {
             echo 'Failed to create user.';
@@ -94,12 +94,12 @@ class UserController extends Controller {
 
     public function update($id)
     {
-        $this->call->model('UserModel');
+        $this->call->model('UsersModel');
         $this->check_login();
 
         $logged_in_user = $_SESSION['user'];
 
-        $user = $this->UserModel->get_user_by_id($id);
+        $user = $this->UsersModel->get_user_by_id($id);
         if (!$user) {
             echo "User not found.";
             return;
@@ -140,7 +140,7 @@ class UserController extends Controller {
                 ];
             }
 
-            if ($this->UserModel->update($id, $data)) {
+            if ($this->UsersModel->update($id, $data)) {
                 redirect('/users');
             } else {
                 echo 'Failed to update user.';
@@ -154,7 +154,7 @@ class UserController extends Controller {
 
     public function delete($id)
     {
-        $this->call->model('UserModel');
+        $this->call->model('UsersModel');
         $this->check_login();
 
         $logged_in_user = $_SESSION['user'];
@@ -165,7 +165,7 @@ class UserController extends Controller {
             return;
         }
 
-        if ($this->UserModel->delete($id)) {
+        if ($this->UsersModel->delete($id)) {
             redirect('/users');
         } else {
             echo 'Failed to delete user.';
@@ -174,7 +174,7 @@ class UserController extends Controller {
 
   public function register()
     {
-        $this->call->model('UserModel');
+        $this->call->model('UsersModel');
 
         if ($this->io->method() === 'post') {
             $username = $this->io->post('username');
@@ -190,7 +190,7 @@ class UserController extends Controller {
                 'role'     => $role
             ];
 
-            if ($this->UserModel->insert($data)) {
+            if ($this->UsersModel->insert($data)) {
                 redirect('/reg/login');
             }
         }
@@ -207,8 +207,8 @@ class UserController extends Controller {
             $username = $this->io->post('username');
             $password = $this->io->post('password');
 
-            $this->call->model('UserModel');
-            $user = $this->UserModel->get_user_by_username($username);
+            $this->call->model('UsersModel');
+            $user = $this->UsersModel->get_user_by_username($username);
 
             if ($user) {
                 if ($this->reg->login($username, $password)) {
@@ -233,14 +233,14 @@ class UserController extends Controller {
 
     public function dashboard()
     {
-        $this->call->model('UserModel');
+        $this->call->model('UsersModel');
         $this->check_login();
 
         $page = isset($_GET['page']) ? $this->io->get('page') : 1;
         $q    = isset($_GET['q']) && !empty($_GET['q']) ? trim($this->io->get('q')) : '';
 
         $records_per_page = 5;
-        $user = $this->UserModel->page($q, $records_per_page, $page);
+        $user = $this->UsersModel->page($q, $records_per_page, $page);
 
         $data['user'] = $user['records'];
         $total_rows = $user['total_rows'];
